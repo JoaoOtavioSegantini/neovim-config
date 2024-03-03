@@ -3,21 +3,26 @@ return {
 	dependencies = {
 		"leoluz/nvim-dap-go",
 		"rcarriga/nvim-dap-ui",
+		"jonboh/nvim-dap-rr",
 	},
 	config = function()
 		require("dapui").setup()
 		require("dap-go").setup()
 
 		local dap, dapui = require("dap"), require("dapui")
+		local rr_dap = require("nvim-dap-rr")
 
-		--local mason_registry = require("mason-registry")
-		--local codelldb = mason_registry.get_package("codelldb")
-		--local extension_path = codelldb:get_install_path() .. "/extension/"
-		--local codelldb_path = extension_path .. "adapter/codelldb"
-		--local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
-		--local cfg = require("rustaceanvim.config")
+		local cpptools_path = vim.fn.stdpath("data")
+			.. "/mason/packages/cpptools/extension/debugAdapters/bin/OpenDebugAD7"
 
-		--dap.configurations.rust = { cfg.get_codelldb_adapter(codelldb_path, liblldb_path) }
+		dap.adapters.cppdbg = {
+			id = "cppdbg",
+			type = "executable",
+			command = cpptools_path,
+		}
+
+		dap.configurations.rust = { rr_dap.get_rust_config() }
+		dap.configurations.cpp = { rr_dap.get_config() }
 
 		dap.listeners.before.attach.dapui_config = function()
 			dapui.open()
