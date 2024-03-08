@@ -3,10 +3,17 @@ return {
     "hrsh7th/cmp-nvim-lsp",
   },
   {
+    "PasiBergman/cmp-nuget",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+  },
+  {
     "L3MON4D3/LuaSnip",
     dependencies = {
       "saadparwaiz1/cmp_luasnip",
       "rafamadriz/friendly-snippets",
+      -- "honza/vim-snippets"
     },
   },
   {
@@ -15,6 +22,8 @@ return {
       local cmp = require("cmp")
 
       require("luasnip.loaders.from_vscode").lazy_load()
+      require("luasnip").filetype_extend("ruby", { "rails" })
+      require("cmp-nuget").setup({})
 
       cmp.setup({
         snippet = {
@@ -33,9 +42,15 @@ return {
           ["<C-e>"] = cmp.mapping.abort(),
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
         }),
+        formatting = {
+          source_names = {
+            nuget = "(NuGet)",
+          },
+        },
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
           { name = "luasnip" }, -- For luasnip users.
+          { name = "nuget", keyword_length = 0 },
           }, {
             { name = "buffer" },
         }),
